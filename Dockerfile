@@ -1,15 +1,17 @@
-FROM continuumio/miniconda3
+FROM python:3.11.2-slim
 
+EXPOSE 8000
 WORKDIR /app
 
-# Create the environment:
-COPY environment.yml .
-RUN conda env create -f environment.yml
 
-# Make RUN commands use the new environment:
-RUN echo "conda activate myenv" >> ~/.bashrc
-SHELL ["/bin/bash", "--login", "-c"]
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends netcat && \
+    apt-get -y install libpq-dev gcc && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# The code to run when container is started:
-COPY main.py entrypoint.sh ./
-ENTRYPOINT ["./entrypoint.sh"]
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+ADD . /app
+
+ENTRYPOINT ./entrypoint.sh

@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  news_classification:
+    container_name: news_classification
+    image: news_classification:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      IMAGE: "news_classification"
+    logging:
+      options:
+        max-file: "5"
+        max-size: "10m"
